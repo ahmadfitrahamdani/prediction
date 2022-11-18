@@ -1,7 +1,7 @@
-import streamlit as st
+import streamlit
 from datetime import date
 
-import yfinance as yf
-from fbprophet import Prophet
+import yfinance
+from fbprophet import Pophet
 from fbprophet.plot import plot_plotly
-from plotly import graph_objs as go
+from plotly import graph_objs
