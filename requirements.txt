@@ -1,6 +1,5 @@
 python == 3.9.6
 
-import datetime
 import streamlit as st
 import numpy as np
 from datetime import date
