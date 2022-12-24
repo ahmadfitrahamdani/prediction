@@ -1,9 +1,7 @@
-python == 3.9.6
-
-import streamlit as st
-import numpy as np
-from datetime import date
-
-import yfinance as yf
-from fbprophet import Prophet
-from plotly import graph_objs as go
+numpy
+pandas
+matplotlib
+plotly
+prophet>=1.1
+streamlit
+yfinance
