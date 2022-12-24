@@ -6,8 +6,7 @@ import numpy as np
 from datetime import date, timedelta
 
 import yfinance as yf
-from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
+from prophet import Prophet
 from plotly import graph_objs as go
 
 batas_mulai = datetime.date(2014, 1, 1)
