@@ -1,9 +1,10 @@
 python == 3.9.6
 
+import datetime
 import streamlit as st
+import numpy as np
 from datetime import date
 
 import yfinance as yf
 from fbprophet import Prophet
-from fbprophet.plot import plot_plotly
 from plotly import graph_objs as go
