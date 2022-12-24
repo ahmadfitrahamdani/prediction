@@ -87,8 +87,6 @@ plot_raw_data()
 
 st.dataframe(data, height=247, width=800)
 
-# st.button('Prediksi')
-
 if st.button('Prediksi'):
     # Predict forecast with Prophet.
     df_train = data[['Date', attribute]]
@@ -114,10 +112,3 @@ if st.button('Prediksi'):
     else:
         hasil_prediksi = satu_tahun.iloc[:1]
     st.dataframe(hasil_prediksi, height=247, width=800)
-
-
-# st.write(forecast.tail())
-
-# st.write(f'Forecast plot for {n_years} years')
-# fig1 = plot_plotly(m, forecast)
-# st.plotly_chart(fig1)
