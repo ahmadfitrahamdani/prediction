@@ -4,6 +4,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from datetime import date, timedelta
+from numpy import mean, absolute
 
 import yfinance as yf
 from prophet import Prophet
@@ -16,7 +17,7 @@ TODAY = date.today().strftime("%Y-%m-%d")
 st.title('US Dollar Index Prediction')
 st.markdown("""
 Aplikasi ini memprediksi nilai dari **US. Dollar Index** dengan rentang waktu **satu hari, satu minggu, satu bulan dan satu tahun ke depan**.
-* **Python Libraries:** streamlit, datetime, yfinance, fbprophet, plotly
+* **Python Libraries:** streamlit, datetime, yfinance, prophet, plotly
 * **Sumber Data:** [Yahoo Finance](https://finance.yahoo.com/quote/DX-Y.NYB)            
 """)
 
@@ -33,7 +34,7 @@ akhir_dataset = st.sidebar.date_input("Sampai dengan", date.today())
 ticker = ('DX-Y.NYB')
 
 st.sidebar.subheader('Atribut prediksi')
-attribute = st.sidebar.selectbox('Tipe Harga',('Open', 'Close', 'High', 'Low', 'Adj Close'))
+attribute = st.sidebar.selectbox('Tipe Nilai',('Open', 'Close', 'High', 'Low', 'Adj Close'))
 
 range_prediksi = st.sidebar.selectbox('Pilih periode:', ('Sehari', 'Seminggu', 'Sebulan', 'Setahun'))
 periode = 0
@@ -49,6 +50,8 @@ elif range_prediksi == 'sebulan':
 else:
     periode = 365
     
+chart_height = st.sidebar.slider("Tinggi Grafik", min_value=400, max_value=700, value=500, step=10)
+
 #Pengambilan data
 @st.cache
 def load_data(ticker):
@@ -56,18 +59,17 @@ def load_data(ticker):
     data.reset_index(inplace=True)
     return data
 
-data_load_state = st.text('Loading data...')
 data = load_data(ticker)
-data_load_state.text('Loading data... selesai!')
 
 # Plot raw data
 def plot_raw_data():
     fig = go.Figure()
+    fig = go.Figure(layout=go.Layout(height=chart_height))
     if attribute == 'Open':
         fig.add_trace(go.Scatter(x=data['Date'], y=data['Open'], name="DXY open", line_color='darkcyan'))
         pass
     elif attribute == 'Close':
-        fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="DXY close", line_color='black'))
+        fig.add_trace(go.Scatter(x=data['Date'], y=data['Close'], name="DXY close", line_color='darkgreen'))
         pass
     elif attribute == 'High':
         fig.add_trace(go.Scatter(x=data['Date'], y=data['High'], name="DXY high", line_color='deepskyblue'))
@@ -82,7 +84,6 @@ def plot_raw_data():
     st.plotly_chart(fig)
 
 plot_raw_data()
-
 st.dataframe(data, height=247, width=800)
 
 if st.button('Prediksi'):
@@ -90,7 +91,7 @@ if st.button('Prediksi'):
     df_train = data[['Date', attribute]]
     df_train = df_train.rename(columns={"Date": "ds", attribute: "y"})
 
-    model = Prophet(growth='linear', seasonality_prior_scale=10)
+    model = Prophet(growth='linear', n_changepoints=50 ,seasonality_prior_scale=0.1)
     model.fit(df_train)
     future = model.make_future_dataframe(periods=periode)
     forecast = model.predict(future)
@@ -99,7 +100,7 @@ if st.button('Prediksi'):
     st.subheader('Hasil Prediksi')
     forecast['ds'] = pd.to_datetime(forecast['ds'], format='%Y-%m-%d')
     satu_tahun = forecast[['ds', 'yhat']].iloc[-365:]
-    satu_tahun.columns = ['tanggal', 'harga_prediksi']
+    satu_tahun.columns = ['tanggal', 'nilai_prediksi']
     # Mengubah dataframe sesuai dengan periode yang dipilih
     if range_prediksi == 'Setahun':
         hasil_prediksi = satu_tahun
@@ -109,4 +110,30 @@ if st.button('Prediksi'):
         hasil_prediksi = satu_tahun.iloc[:7]
     else:
         hasil_prediksi = satu_tahun.iloc[:1]
+        
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=hasil_prediksi['tanggal'], y=hasil_prediksi['nilai_prediksi'], name="Hasil Prediksi", line_color='darkcyan'))
+    st.plotly_chart(fig)
+    
     st.dataframe(hasil_prediksi, height=247, width=800)
+    
+    #Evaluasi Model
+    train_data = df_train.sample(frac=0.8, random_state=0)
+    test_data = df_train.drop(train_data.index)
+    
+    prediction = model.predict(pd.DataFrame({'ds':test_data['ds']}))
+    y_test = test_data['y']
+    y_pred = prediction['yhat']
+    y_pred = y_pred.astype(int)
+
+    def mad(data, axis=None):
+        return mean(absolute(data - mean(data, axis)), axis)
+
+    def mean_absolute_percentage_error(y_true, y_pred): 
+        y_true, y_pred = np.array(y_true), np.array(y_pred)
+        return np.mean(np.abs((y_true - y_pred) / y_true)) * 100
+
+    st.sidebar.subheader('Evaluasi Model')
+    st.sidebar.text(f"MAD:\t{mad(y_pred):.2f}")
+    st.sidebar.text(f"MAPE:\t{mean_absolute_percentage_error(y_test, y_pred):.2f}")
+
