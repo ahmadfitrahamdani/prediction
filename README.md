@@ -2,4 +2,4 @@
 Prediksi nilai dari US Dollar Index
 
 
-[US Dollar Index Prediction](http://fidtra.streamlit.app)
+[US Dollar Index Prediction App](http://fidtra.streamlit.app)
