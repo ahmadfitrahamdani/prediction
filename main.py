@@ -112,7 +112,7 @@ if st.button('Prediksi'):
         hasil_prediksi = satu_tahun.iloc[:1]
         
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=hasil_prediksi['tanggal'], y=hasil_prediksi['nilai_prediksi'], name="Hasil Prediksi", line_color='darkcyan'))
+    fig.add_trace(go.Scatter(x=hasil_prediksi['tanggal'], y=hasil_prediksi['nilai_prediksi'], name="Hasil Prediksi", line_color='lightblue'))
     st.plotly_chart(fig)
     
     st.dataframe(hasil_prediksi, height=247, width=800)
