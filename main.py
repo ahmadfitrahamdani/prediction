@@ -1,4 +1,3 @@
-# pip install streamlit fbprophet yfinance plotly
 import datetime
 import streamlit as st
 import pandas as pd
@@ -91,9 +90,10 @@ if st.button('Prediksi'):
     df_train = data[['Date', attribute]]
     df_train = df_train.rename(columns={"Date": "ds", attribute: "y"})
 
-    model = Prophet(growth='linear', n_changepoints=50 ,seasonality_prior_scale=0.1)
+    model = Prophet(growth='linear', weekly_seasonality=False, n_changepoints=50 ,seasonality_prior_scale=0.1)
     model.fit(df_train)
     future = model.make_future_dataframe(periods=periode)
+    future = future[future['ds'].dt.dayofweek < 5]
     forecast = model.predict(future)
 
     # Show and plot forecast
