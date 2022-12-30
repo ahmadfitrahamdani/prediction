@@ -85,7 +85,7 @@ def plot_raw_data():
 plot_raw_data()
 st.dataframe(data, height=247, width=800)
 
-if st.button('Prediksi'):
+if st.sidebar.button('Prediksi'):
     # Predict forecast with Prophet.
     df_train = data[['Date', attribute]]
     df_train = df_train.rename(columns={"Date": "ds", attribute: "y"})
