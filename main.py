@@ -77,7 +77,7 @@ def plot_raw_data():
         fig.add_trace(go.Scatter(x=data['Date'], y=data['Low'], name="DXY low", line_color='brown'))
         pass
     else:
-        fig.add_trace(go.Scatter(x=data['Date'], y=data['Low'], name="DXY high", line_color='burlywood'))
+        fig.add_trace(go.Scatter(x=data['Date'], y=data['Low'], name="DXY adj close", line_color='burlywood'))
         pass
     fig.layout.update(title_text='Historis Indeks US Dollar ', xaxis_rangeslider_visible=True)
     st.plotly_chart(fig)
@@ -114,7 +114,6 @@ if st.sidebar.button('Prediksi'):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=hasil_prediksi['tanggal'], y=hasil_prediksi['nilai_prediksi'], name="Hasil Prediksi", line_color='lightblue'))
     st.plotly_chart(fig)
-    
     st.dataframe(hasil_prediksi, height=247, width=800)
     
     #Evaluasi Model
@@ -135,5 +134,5 @@ if st.sidebar.button('Prediksi'):
 
     st.sidebar.subheader('Evaluasi Model')
     st.sidebar.text(f"MAD:\t{mad(y_pred):.2f}")
-    st.sidebar.text(f"MAPE:\t{mean_absolute_percentage_error(y_test, y_pred):.2f}")
+    st.sidebar.text(f"MAPE:\t{mean_absolute_percentage_error(y_test, y_pred):.2f}%")
 
