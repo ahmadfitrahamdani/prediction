@@ -93,13 +93,13 @@ if st.sidebar.button('Prediksi'):
     model = Prophet(growth='linear', weekly_seasonality=False, n_changepoints=50 ,seasonality_prior_scale=0.1)
     model.fit(df_train)
     future = model.make_future_dataframe(periods=periode)
-    future = future[future['ds'].dt.dayofweek < 5]
     forecast = model.predict(future)
 
     # Show and plot forecast
     st.subheader('Hasil Prediksi')
     forecast['ds'] = pd.to_datetime(forecast['ds'], format='%Y-%m-%d')
     hasil_prediksi = forecast[['ds', 'yhat']].iloc[-periode:]
+    hasil_prediksi = future[future['ds'].dt.dayofweek < 5]
     hasil_prediksi.columns = ['tanggal', 'nilai_prediksi']
         
     fig = go.Figure()
