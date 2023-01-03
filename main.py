@@ -99,17 +99,8 @@ if st.sidebar.button('Prediksi'):
     # Show and plot forecast
     st.subheader('Hasil Prediksi')
     forecast['ds'] = pd.to_datetime(forecast['ds'], format='%Y-%m-%d')
-    satu_tahun = forecast[['ds', 'yhat']].iloc[-365:]
-    satu_tahun.columns = ['tanggal', 'nilai_prediksi']
-    # Mengubah dataframe sesuai dengan periode yang dipilih
-    if range_prediksi == 'Setahun':
-        hasil_prediksi = satu_tahun
-    elif range_prediksi == 'Sebulan':
-        hasil_prediksi = satu_tahun.iloc[:30]
-    elif range_prediksi == 'Seminggu':
-        hasil_prediksi = satu_tahun.iloc[:7]
-    else:
-        hasil_prediksi = satu_tahun.iloc[:1]
+    hasil_prediksi = forecast[['ds', 'yhat']].iloc[-periode:]
+    hasil_prediksi.columns = ['tanggal', 'nilai_prediksi']
         
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=hasil_prediksi['tanggal'], y=hasil_prediksi['nilai_prediksi'], name="Hasil Prediksi", line_color='lightblue'))
