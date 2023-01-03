@@ -37,13 +37,13 @@ attribute = st.sidebar.selectbox('Tipe Nilai',('Open', 'Close', 'High', 'Low', '
 
 range_prediksi = st.sidebar.selectbox('Pilih periode:', ('Sehari', 'Seminggu', 'Sebulan', 'Setahun'))
 periode = 0
-if range_prediksi == 'sehari':
+if range_prediksi == 'Sehari':
     periode = 1
     pass
-elif range_prediksi == 'seminggu':
+elif range_prediksi == 'Seminggu':
     periode = 7
     pass
-elif range_prediksi == 'sebulan':
+elif range_prediksi == 'Sebulan':
     periode = 30
     pass
 else:
